@@ -51,44 +51,63 @@ func runSection(yaml simpleyaml.Yaml, key string) {
 	list, _ := yaml.Get(key).Array()
 	for item := range list {
 		current, _ := yaml.Get(key).GetIndex(item).String()
-		switch key {
-		case "install":
-			runCmd(current)
-		case "script":
-			runCmd(current)
-		case "after_script":
-			runCmd(current)
-		}
+		runCmd(current)
 	}
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: travis-exec <travis_file> <travis_field>")
-		fmt.Println("Example: go run tests/k8s-euft/travis-exec.go .travis.yml")
+	var travisField string
+	var travisKeys []string
+	travisLifecycle := map[string]bool {
+		"before_install": true,
+		"install": true,
+		"before_script": true,
+		"script": true,
+		"after_success": true,
+	}
+
+	// Check args
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: travis-exec <travis_file> <optional travis_field>")
+		fmt.Println("Example: go run tests/k8s-euft/travis-exec.go .travis.yml install")
 		os.Exit(1)
 	}
+
 	filename := os.Args[1]
+	if len(os.Args) == 3 {
+		travisField = os.Args[2]
+	}
 
 	source, err := ioutil.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}
 
+	// Loading Yaml config
 	yaml, err := simpleyaml.NewYaml(source)
 	if err != nil {
 		panic(err)
 	}
 
-	// Run all tests (install/script...) for all envs
+	// Run all tests (install/script...) for all envs or the specified one
 	allEnv, _ := yaml.Get("env").Array()
-	keys, err := yaml.GetMapKeys()
+	if len(travisField) == 0 {
+		travisKeys, _ = yaml.GetMapKeys()
+	} else {
+		travisKeys = append(travisKeys, travisField)
+	}
 
+	// for each env, do:
 	for currentIndex := range allEnv {
 		envName, _ := yaml.Get("env").GetIndex(currentIndex).String()
 		setEnv(envName)
-		for key := range keys {
-			runSection(*yaml, keys[key])
+		// run lifecycles in travis order
+		for lifecycle := range travisLifecycle {
+			for _, key := range travisKeys {
+				if lifecycle == key {
+					runSection(*yaml, key)
+				}
+			}
 		}
 	}
 }
