@@ -48,7 +48,7 @@ The `env` section describes the environment variables for:
 
 The `install` section will perform helm linting checks, Kubernetes install and deploy helm on this newly create Kubernetes cluster.
 
-Finally, in the `script` section, set all your tests files or folders you want to apply. 
+Finally, in the `script` section, set all your tests files or folders you want to apply.
 
 ## Usage with Vagrant
 
@@ -79,3 +79,4 @@ To perform tests, simply run `Vagrant up`.
 
 ## Projects using k8s-euft
 * [MySocialApp Cassandra Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-cassandra)
+* [MySocialApp Traefik Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-traefik)
