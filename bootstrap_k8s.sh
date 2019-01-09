@@ -7,6 +7,11 @@ if [ -z $K8S_VERSION ] ; then
     exit 1
 fi
 
+if [ $(kubectl get no -l kubernetes.io/hostname=kube-master | grep -c Ready) == 1 ] ; then
+    echo "Kubernetes is already installed, skipping install"
+    exit 0
+fi
+
 # Kubernetes info
 GIT_REV=${GIT_REV:-master}
 echo "K8S_VERSION: $K8S_VERSION"

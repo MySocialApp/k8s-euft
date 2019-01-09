@@ -67,6 +67,8 @@ Vagrant.configure("2") do |config|
       vb.memory = "8096"
   end
 
+  config.vm.network "private_network", type: "dhcp"
+
   config.vm.provision "shell", inline: <<-SHELL
     cd /vagrant_data
     source tests/k8s-euft/env.bash
