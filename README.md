@@ -13,7 +13,7 @@ To perform automatic tests, you can use:
 Simply create a `tests` folder inside your repository and add this repository as a submodule (or simply clone it if you don't want to use submodules):
 
 ```bash
-mkdir tests && cd !$
+mkdir tests && cd tests
 git submodule add git@github.com:MySocialApp/k8s-euft.git
 ```
 
