@@ -24,7 +24,7 @@ source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/env.bash
 echo "Downloading $DIND_CLUSTER_SH"
 rm -f ${DIND_CLUSTER_SH}
 
-if [ $(wget -S --spider ${DIND_URL} 2>&1 | grep -c 'HTTP/1.1 200 OK') ] ; then
+if [ $(wget -S --spider ${DIND_URL} 2>&1 | grep -c 'HTTP/1.1 200 OK') == 0 ] ; then
   DIND_URL=$DIND_URL_NEW
 fi
 wget ${DIND_URL}
