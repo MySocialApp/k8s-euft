@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ -f /tmp/bootstrap.done ] ; then
+  echo "Kubernetes is already installed, skipping prerequisites step"
+  exit 0
+fi
+
 # Install prerequisite for Docker and yq
 apt-get update
 apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common \
