@@ -32,10 +32,10 @@ env:
   - K8S_VERSION=1.8 HELM_VERSION=2.9.1 NUM_NODES=3 SKIP_SNAPSHOT=y PATH="$HOME/.kubeadm-dind-cluster:/tmp/linux-amd64:$PATH"
 
 install:
-  - tests/k8s-euft/helm.sh local_install
-  - bats tests/k8s-euft/helm_lint.bats
-  - tests/k8s-euft/bootstrap_k8s.sh
-  - tests/k8s-euft/helm.sh install
+  - tests/k8s-euft/helm.sh local_install || exit 1
+  - bats tests/k8s-euft/helm_lint.bats || exit 1
+  - tests/k8s-euft/bootstrap_k8s.sh || exit 1
+  - tests/k8s-euft/helm.sh install || exit 1
 
 script:
   - **run your_tests here**
