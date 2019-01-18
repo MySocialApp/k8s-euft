@@ -19,26 +19,12 @@ git submodule add git@github.com:MySocialApp/k8s-euft.git
 
 ## Usage with Travis
 
-First, of all, setup a travis-ci account, link it to your repository and create `.travis.yml` file in the root directory of your repository with this content:
+First, of all, setup a travis-ci account, link it to your repository and create `.travis.yml` file in the root directory of your repository.
+ 
+You can use the [travis example file](examples/.travis.yaml):
 
-```yaml
-
----
-language: go
-sudo: required
-
-env:
-  - K8S_VERSION=1.9 HELM_VERSION=2.9.1 NUM_NODES=3 SKIP_SNAPSHOT=y PATH="$HOME/.kubeadm-dind-cluster:/tmp/linux-amd64:$PATH"
-  - K8S_VERSION=1.8 HELM_VERSION=2.9.1 NUM_NODES=3 SKIP_SNAPSHOT=y PATH="$HOME/.kubeadm-dind-cluster:/tmp/linux-amd64:$PATH"
-
-install:
-  - tests/k8s-euft/helm.sh local_install || exit 1
-  - bats tests/k8s-euft/helm_lint.bats || exit 1
-  - tests/k8s-euft/bootstrap_k8s.sh || exit 1
-  - tests/k8s-euft/helm.sh install || exit 1
-
-script:
-  - **run your_tests here**
+```bash
+cp k8s-euft/examples/.travis.yaml ../.travis.yaml
 ```
 
 The `env` section describes the environment variables for:
@@ -52,33 +38,27 @@ Finally, in the `script` section, set all your tests files or folders you want t
 
 ## Usage with Vagrant
 
-If you want to also run those tests locally, a basic go script helps to read travis config and run it. So you'll need a travis.yaml file as well that wee be deployed inside your VM.
+If you want to also run those tests locally, a basic go script helps to read travis config and run it. So you'll need a travis.yaml file as well that will be deployed inside your VM.
 
-Here is an example of a basic `Vagrantfile`:
+You can use the [Vagrant example config](examples/Vagrantfile):
 
-```ruby
-Vagrant.configure("2") do |config|
-
-  config.vm.box = "deimos_fr/debian-stretch"
-  config.vm.synced_folder "..", "/vagrant_data"
-
-  config.vm.provider "virtualbox" do |vb|
-      vb.cpus = 4
-      vb.memory = "8096"
-  end
-
-  config.vm.network "private_network", type: "dhcp"
-
-  config.vm.provision "shell", inline: <<-SHELL
-    cd /vagrant_data
-    source tests/k8s-euft/env.bash
-    tests/k8s-euft/prerequisites.sh
-    go run tests/k8s-euft/travis-exec.go .travis.yml
-  SHELL
-end
+```bash
+cp k8s-euft/examples/Vagrantfile .
 ```
+
 To perform tests, simply run `Vagrant up`.
 
+## Make basic tests
+
+In the examples folder, you'll find a simple use case to start. To initialize it, simply copy those files:
+
+```bash
+cp k8s-euft/examples/run_tests.sh .
+```
+
 ## Projects using k8s-euft
+
 * [MySocialApp Cassandra Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-cassandra)
 * [MySocialApp Traefik Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-traefik)
+* [MySocialApp Elasticsearch Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-elasticsearch)
+* [MySocialApp RabbitMQ Helm chart](https://github.com/MySocialApp/kubernetes-helm-chart-rabbitmq)
