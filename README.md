@@ -15,12 +15,13 @@ Simply create a `tests` folder inside your repository and add this repository as
 ```bash
 mkdir tests && cd tests
 git submodule add git@github.com:MySocialApp/k8s-euft.git
+cat k8s-euft/examples/.gitignore >> ../.gitignore
 ```
 
 ## Usage with Travis
 
 First, of all, setup a travis-ci account, link it to your repository and create `.travis.yml` file in the root directory of your repository.
- 
+
 You can use the [travis example file](examples/.travis.yaml):
 
 ```bash
