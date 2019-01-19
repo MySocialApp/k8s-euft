@@ -1,12 +1,15 @@
 # K8s End User Funtional Testing (k8s-euft)
 
-We've made this repository to be able to replicate a kubernetes cluster and run functional tests.
+We've made this repository to be able to replicate a kubernetes cluster and run functional tests as simply as possible with the less dependencies as possible.
+
+You know that it can be hard to test and this is can be critic for some services like stateful applications.
+That's why this tooling exist, to perform automatic tests, you can use:
+* [Travis CI](https://travis-ci.org/) for remote testing
+* [Vagrant](https://www.vagrantup.com/) for local testing
 
 We're using [Kubeadm DIND Cluster](https://github.com/kubernetes-sigs/kubeadm-dind-cluster) to quickly deploy a Kubernetes testing cluster.
 
-To perform automatic tests, you can use:
-* [Travis CI](https://travis-ci.org/) for remote testing
-* [Vagrant](https://www.vagrantup.com/) for local testing
+Then you can use your favorite framework/language to perform your tests.
 
 ## Install
 
