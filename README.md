@@ -30,6 +30,7 @@ cp k8s-euft/examples/.travis.yaml ../.travis.yaml
 
 The `env` section describes the environment variables for:
 * K8S_VERSION: the Kubernetes version you want to deploy
+* GIT_REV: the git commit/tag/branch to pin on Kubeadm DIND Cluster
 * HELM_VERSION: the helm version you want to deploy
 * NUM_NODES: the number of non master nodes you need in your cluster
 
