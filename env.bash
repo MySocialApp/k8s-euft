@@ -19,9 +19,9 @@ function ptask() {
 }
 
 check_pod_is_running() {
-    ROLE=$1
+    KIND="$1"
     POD_FILTERS="$2"
-    KIND="$3"
+    ROLE=$3
     CURRENT_NODES=0
     READY_NODES=0
     NUM_NODES=$(kubectl get $KIND $POD_FILTERS | tail -1 | awk '{ print $2 }')
@@ -30,13 +30,13 @@ check_pod_is_running() {
     while [ "$CURRENT_NODES" != "$NUM_NODES" ] ; do
         sleep 15
         CURRENT_NODES=$(kubectl get pod $POD_FILTERS | grep Running | wc -l)
-        echo "$app_name $ROLE running nodes: $CURRENT_NODES/$NUM_NODES, waiting..." >&3
+        echo "$APP_NAME $ROLE running nodes: $CURRENT_NODES/$NUM_NODES, waiting..." >&3
     done
 
     # Ensure the state of each pod is fully ready
     while [ "$READY_NODES" != "$NUM_NODES" ] ; do
         sleep 15
         READY_NODES=$(kubectl get po $POD_FILTERS | awk '{ print $2 }' | grep -v READY | awk -F'/' '{ print ($1 == $2) ? "true" : "false" }' | grep true | wc -l)
-        echo "$app_name $ROLE running ready nodes: $READY_NODES/$NUM_NODES, waiting..." >&3
+        echo "$APP_NAME $ROLE running ready nodes: $READY_NODES/$NUM_NODES, waiting..." >&3
     done
 }
