@@ -25,10 +25,10 @@ cat k8s-euft/examples/.gitignore >> ../.gitignore
 
 First, of all, setup a travis-ci account, link it to your repository and create `.travis.yml` file in the root directory of your repository.
 
-You can use the [travis example file](examples/.travis.yaml):
+You can use the [travis example file](examples/.travis.yml):
 
 ```bash
-cp k8s-euft/examples/.travis.yaml ../.travis.yaml
+cp k8s-euft/examples/.travis.yml ../.travis.yml
 ```
 
 The `env` section describes the environment variables for:
