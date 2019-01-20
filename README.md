@@ -17,7 +17,7 @@ Simply create a `tests` folder inside your repository and add this repository as
 
 ```bash
 mkdir tests && cd tests
-git submodule add git@github.com:MySocialApp/k8s-euft.git
+git submodule add https://github.com/MySocialApp/k8s-euft.git
 cat k8s-euft/examples/.gitignore >> ../.gitignore
 ```
 
