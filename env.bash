@@ -18,7 +18,7 @@ function ptask() {
     echo -e "\n=> $1\n"
 }
 
-check_pod_is_running() {
+function check_pod_is_running() {
     KIND="$1"
     POD_FILTERS="$2"
     ROLE=$3
