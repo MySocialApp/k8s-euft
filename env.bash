@@ -1,11 +1,27 @@
 #!/usr/bin/env bash
 
+# Detect OS
+export os=''
+if [ $(grep -i centos /etc/*-release | wc -l) -gt 0 ] ; then
+  os=centos
+elif [ $(grep -i ubuntu /etc/*-release | wc -l) -gt 0 ] ; then
+  os=ubuntu
+elif [ $(grep -i debian /etc/*-release | wc -l) -gt 0 ] ; then
+  os=debian
+else
+  echo "OS type not detected"
+  exit 1
+fi
+
 # Environment variables
 export PATH="$HOME/.kubeadm-dind-cluster:/tmp/linux-amd64:$PATH"
 export GOPATH=/root GOROOT=/usr/lib/go GOBIN=/usr/bin
 export DIND_CLUSTER_SH="dind-cluster-v${K8S_VERSION}.sh"
 export DIND_URL=https://cdn.rawgit.com/kubernetes-sigs/kubeadm-dind-cluster/${GIT_REV}/fixed/${DIND_CLUSTER_SH}
 export DIND_URL_NEW=https://github.com/kubernetes-sigs/kubeadm-dind-cluster/releases/download/${GIT_REV}/${DIND_CLUSTER_SH}
+if [ "$os" == 'centos' ] ; then
+  export GOROOT=/usr/lib/golang GOBIN=/bin
+fi
 
 # Common useful functions
 function ptitle() {
