@@ -55,6 +55,12 @@ func runSection(yaml simpleyaml.Yaml, key string) {
 	}
 }
 
+func checkTravisLifecycleExists(yaml *simpleyaml.Yaml, travisLifecycle map[string]bool, lifecycle string)  {
+	if _, ok := travisLifecycle[lifecycle]; ok {
+		runSection(*yaml, lifecycle)
+	}
+}
+
 func main() {
 	var travisField string
 	var travisKeys []string
@@ -102,12 +108,10 @@ func main() {
 		envName, _ := yaml.Get("env").GetIndex(currentIndex).String()
 		setEnv(envName)
 		// run lifecycles in travis order
-		for lifecycle := range travisLifecycle {
-			for _, key := range travisKeys {
-				if lifecycle == key {
-					runSection(*yaml, key)
-				}
-			}
-		}
+		checkTravisLifecycleExists(yaml, travisLifecycle, "before_install")
+		checkTravisLifecycleExists(yaml, travisLifecycle, "install")
+		checkTravisLifecycleExists(yaml, travisLifecycle, "before_script")
+		checkTravisLifecycleExists(yaml, travisLifecycle, "script")
+		checkTravisLifecycleExists(yaml, travisLifecycle, "after_success")
 	}
 }
