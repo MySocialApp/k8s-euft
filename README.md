@@ -59,6 +59,7 @@ In the examples folder, you'll find a simple use case to start. To initialize it
 
 ```bash
 cp k8s-euft/examples/run_tests.sh .
+cp -Rf k8s-euft/examples/play .
 ```
 
 ## Projects using k8s-euft
