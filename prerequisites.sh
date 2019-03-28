@@ -15,10 +15,14 @@ if [ "$os" == 'debian' ] || [ "$os" == 'ubuntu' ] ; then
   apt-get update
   apt-get -y install docker-ce
 elif [ "$os" == 'centos' ] ; then
-  yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  if [ $(yum repolist | grep -ic epel) -eq 0 ] ; then
+    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  fi
   yum install -y yum-utils device-mapper-persistent-data lvm2 bats golang jq socat
-  yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  yum install -y docker-ce
+  if [ ! -f /bin/docker ] ; then
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install -y docker-ce
+  fi
   systemctl start docker
 fi
 
