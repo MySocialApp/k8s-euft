@@ -30,7 +30,8 @@ function init_local() {
 
 function init() {
     echo "Deploy helm on K8S cluster"
-    helm init
+    kubectl apply -f tiller.yaml
+    helm init --service-account tiller --wait
     wait_ready
 }
 

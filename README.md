@@ -7,7 +7,7 @@ That's why this tooling exist, to perform automatic tests, you can use:
 * [Travis CI](https://travis-ci.org/) for remote testing
 * [Vagrant](https://www.vagrantup.com/) for local testing
 
-We're using [Kubeadm DIND Cluster](https://github.com/kubernetes-sigs/kubeadm-dind-cluster) to quickly deploy a Kubernetes testing cluster.
+We're using [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) to quickly deploy a Kubernetes testing cluster.
 
 Then you can use your favorite framework/language to perform your tests.
 
@@ -33,7 +33,6 @@ cp k8s-euft/examples/.travis.yml ../.travis.yml
 
 The `env` section describes the environment variables for:
 * K8S_VERSION: the Kubernetes version you want to deploy
-* GIT_REV: the git commit/tag/branch to pin on Kubeadm DIND Cluster
 * HELM_VERSION: the helm version you want to deploy
 * NUM_NODES: the number of non master nodes you need in your cluster
 

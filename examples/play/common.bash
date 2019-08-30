@@ -10,10 +10,13 @@ num_nodes_set() {
 num_nodes_are_labeled_as_node() {
     label='node-role.kubernetes.io/node=true'
 
-    for i in $(seq 1 $NUM_NODES) ; do
-        if [ $(kubectl get nodes --show-labels | grep kube-node-$i | grep $label | wc -l) == 0 ] ; then
-            kubectl label nodes kube-node-$i node-role.kubernetes.io/node=true --overwrite
+    counter=1
+    for node in $(kubectl get nodes | awk '/kind-worker/{ print $1 }') ; do
+        if [ $counter -gt $NUM_NODES ] ; then
+            exit 0
         fi
+        kubectl label nodes $node node-role.kubernetes.io/node=true --overwrite
+        counter=$((counter + 1))
     done
 }
 

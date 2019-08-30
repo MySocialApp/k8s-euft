@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+set -x
 
 if [ -f /tmp/bootstrap.done ] ; then
   echo "Kubernetes is already installed, skipping install step"
@@ -12,33 +13,54 @@ if [ -z $K8S_VERSION ] ; then
     exit 1
 fi
 
-if [ $(kubectl get no -l kubernetes.io/hostname=kube-master | grep -c Ready) == 1 ] ; then
+if [ -z $NUM_NODES ] ; then
+    echo "Please set NUM_NODES variable"
+    exit 1
+elif [ $NUM_NODES -lt 1 ]; then
+    echo "NUM_NODES variable value should be at least equal to 1"
+    exit 1
+fi
+
+if [ $(kind get clusters | grep -c kind) == 1 ] ; then
     echo "Kubernetes is already installed, skipping install"
     exit 0
 fi
-
-# Kubernetes info
-GIT_REV=${GIT_REV:-master}
-echo "K8S_VERSION: $K8S_VERSION"
-echo "GIT_REV: $GIT_REV"
 
 # Load env vars
 source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/env.bash
 
 # Download and run k8s
-echo "Downloading $DIND_CLUSTER_SH"
-rm -f ${DIND_CLUSTER_SH}
+echo "Downloading Kind and kubectl"
+curl -sLo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
+curl -sLo ./kubectl https://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl
+chmod +x ./kind ./kubectl
+mv kind kubectl /usr/bin/
 
-if [ $(wget -S --spider ${DIND_URL} 2>&1 | grep -c 'HTTP/1.1 200 OK') == 0 ] ; then
-  DIND_URL=$DIND_URL_NEW
-fi
-wget ${DIND_URL}
-chmod +x ${DIND_CLUSTER_SH}
+echo "Generating kind config"
+echo 'kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+nodes:
+- role: control-plane' > kind.config
+for i in `seq 1 $NUM_NODES`; do
+    echo '- role: worker' >> kind.config
+done
 
 echo "Launching Kubernetes install"
-./${DIND_CLUSTER_SH} up
+kind create cluster --config kind.config --image kindest/node:v${K8S_VERSION}
+if [ $? == 0 ] ; then
+    touch /tmp/bootstrap.done
+    rm -f kind.config
+else
+    echo "Error during Kubernetes bootstrap"
+    exit 1
+fi
+
+echo "Set this cluster as default one"
+if [ ! -f ~/.kube/config ] ; then
+    cp $(kind get kubeconfig-path --name="kind") ~/.kube/config
+else
+    echo "Can't copy kube config to default location because you already have one"
+fi
 
 echo "Setup bashrc for kubectl and helm"
 echo PATH="$PATH" >> ~/.bashrc
-
-touch /tmp/bootstrap.done
